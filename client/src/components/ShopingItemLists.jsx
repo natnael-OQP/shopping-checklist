@@ -1,26 +1,44 @@
-// import { Items } from '../Data
+// * Add items with name, time, cost and description                   ------------ X
+// * Edit items and save                                               ------------
+// * Delete items                                                      ------------ X
+// * Check/uncheck items bought, with color difference                 ------------ X
+// * Shows cost of  items bought vs total cost with progress bar       ------------
+// * Items sorted by "time to buy" when fetched                        ------------
+
 import ShopItem from './ShopItem'
 import AddItemModal from './AddItemModal'
 import { useEffect, useState } from 'react'
 import instance from '../config/axios'
+import UpdateItemsModal from './UpdateItemsModal'
 
 function ShoppingItemLists() {
     const [showModal, setShowModal] = useState(false)
+    const [updateModal, setUpdateModal] = useState(false)
     const [items, setItems] = useState([])
+
+    console.log(updateModal)
 
     useEffect(() => {
         const fetch = async () => {
-            const { data } = await instance.get('/')
-            setItems(data)
+            try {
+                const { data } = await instance.get('/')
+                setItems(data)
+            } catch (error) {
+                console.log(error)
+            }
         }
         fetch()
     }, [])
 
-    console.log(items)
-
     if (!items) {
         return <h1>loading.....</h1>
     }
+
+    const handelUpdate = async (id) => {
+        console.log('id=>', id)
+        setUpdateModal(!updateModal)
+    }
+
     return (
         <div className="max-w-3xl pt-20 mx-auto ">
             <h1 className="text-5xl font-semibold text-center font-popi ">
@@ -36,13 +54,25 @@ function ShoppingItemLists() {
             </div>
             <div className="flex flex-col flex-wrap w-full ">
                 {items.map((item) => (
-                    <ShopItem key={item.id} item={item} setItems={setItems} />
+                    <ShopItem
+                        key={item.id}
+                        item={item}
+                        setItems={setItems}
+                        handelUpdate={handelUpdate}
+                    />
                 ))}
             </div>
             {showModal && (
                 <AddItemModal
                     showModal={showModal}
                     setShowModal={setShowModal}
+                    setItems={setItems}
+                />
+            )}
+            {updateModal && (
+                <UpdateItemsModal
+                    updateModal={updateModal}
+                    setUpdateModal={setUpdateModal}
                     setItems={setItems}
                 />
             )}

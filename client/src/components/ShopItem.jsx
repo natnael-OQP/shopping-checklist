@@ -5,6 +5,7 @@ import instance from '../config/axios'
 function Item({
     item: { _id, image, name, price, desc, createdAt },
     setItems,
+    handelUpdate,
 }) {
     const [isChecked, setIsChecked] = useState(false)
 
@@ -89,7 +90,10 @@ function Item({
                     >
                         <MdDelete size={24} color="#333" />
                     </button>
-                    <button className="bg-[#EBECF4] m-1 p-[5px] hover:scale-105 rounded-sm active:scale-100 hover:sm">
+                    <button
+                        // onClick={() => handelUpdate(_id)}
+                        className="bg-[#EBECF4] m-1 p-[5px] hover:scale-105 rounded-sm active:scale-100 hover:sm"
+                    >
                         <MdEdit size={24} color="#333" />
                     </button>
                 </div>

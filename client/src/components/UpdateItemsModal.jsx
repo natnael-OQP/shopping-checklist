@@ -2,9 +2,8 @@ import { useId } from 'react'
 import { useState } from 'react'
 import instance from '../config/axios.js'
 
-function Modal({ showModal, setShowModal, setItems }) {
+function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
     const id = useId()
-
     const [name, setName] = useState()
     const [image, setImage] = useState()
     const [price, setPrice] = useState()
@@ -14,22 +13,26 @@ function Modal({ showModal, setShowModal, setItems }) {
         if (!name || !price || !desc) {
             return
         }
-        setItems((prev) => [...prev, { name, price, desc, image }])
+        console.log('update')
+        // setItems((prev) => [...prev, { name, price, desc, image }])
         try {
-            await instance.post('/', {
-                name,
-                price,
-                desc,
-                image,
-            })
+            // await instance.put('/', {
+            //     name,
+            //     price,
+            //     desc,
+            //     image,
+            // })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
-        setShowModal(!showModal)
+        setUpdateModal(!updateModal)
     }
 
     return (
-        <div className="cursor-pointer ">
+        <div
+            onClick={() => setUpdateModal(!updateModal)}
+            className="cursor-pointer "
+        >
             <>
                 <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
                     <div className="relative w-auto max-w-sm mx-auto my-6">
@@ -38,11 +41,11 @@ function Modal({ showModal, setShowModal, setItems }) {
                             {/*header*/}
                             <div className="flex items-start justify-between p-5 border-b border-solid rounded-t border-slate-200">
                                 <h3 className="text-3xl font-semibold font-popi">
-                                    Add Item
+                                    Update Item
                                 </h3>
                                 <button
                                     className="float-right p-1 ml-auto text-3xl font-semibold leading-none text-black bg-transparent border-0 outline-none opacity-5 focus:outline-none"
-                                    onClick={() => setShowModal(false)}
+                                    onClick={() => setUpdateModal(false)}
                                 >
                                     <span className="block w-6 h-6 text-2xl text-black bg-transparent outline-none opacity-5 focus:outline-none">
                                         ×
@@ -132,7 +135,7 @@ function Modal({ showModal, setShowModal, setItems }) {
                                 <button
                                     className="px-6 py-2 mb-1 mr-1 text-lg font-bold text-red-500 uppercase transition-all duration-150 ease-linear outline-none background-transparent font-popi focus:outline-none"
                                     type="button"
-                                    onClick={() => setShowModal(!showModal)}
+                                    onClick={() => setUpdateModal(!updateModal)}
                                 >
                                     Close
                                 </button>
@@ -153,4 +156,4 @@ function Modal({ showModal, setShowModal, setItems }) {
     )
 }
 
-export default Modal
+export default UpdateItemsModal
