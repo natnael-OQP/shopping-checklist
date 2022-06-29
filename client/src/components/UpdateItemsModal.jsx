@@ -2,37 +2,48 @@ import { useId } from 'react'
 import { useState } from 'react'
 import instance from '../config/axios.js'
 
-function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
+function UpdateItemsModal({
+    updateModal,
+    setUpdateModal,
+    setItems,
+    updatedItem,
+}) {
     const id = useId()
-    const [name, setName] = useState()
-    const [image, setImage] = useState()
-    const [price, setPrice] = useState()
-    const [desc, setDesc] = useState()
+    const [name, setName] = useState(updatedItem.name)
+    const [image, setImage] = useState(updatedItem.image)
+    const [price, setPrice] = useState(updatedItem.price)
+    const [desc, setDesc] = useState(updatedItem.desc)
 
-    const handelSubmit = async () => {
-        if (!name || !price || !desc) {
-            return
+    const handelSave = async () => {
+        const item = {
+            name,
+            image,
+            price,
+            desc,
         }
-        console.log('update')
-        // setItems((prev) => [...prev, { name, price, desc, image }])
-        try {
-            // await instance.put('/', {
-            //     name,
-            //     price,
-            //     desc,
-            //     image,
-            // })
-        } catch (error) {
-            // console.log(error)
-        }
+        // optimistic ui
+        setItems((prev) => {
+            const newItem = prev.filter((item) => item._id !== updatedItem._id)
+            return [...newItem, item]
+        })
         setUpdateModal(!updateModal)
+        try {
+            await instance.put(`/${updatedItem._id}`, item)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const truncate = (str) => {
+        if (Number(str?.length) >= 30) {
+            return str.substring(0, 30) + '...'
+        } else {
+            return str
+        }
     }
 
     return (
-        <div
-            onClick={() => setUpdateModal(!updateModal)}
-            className="cursor-pointer "
-        >
+        <div className="cursor-pointer ">
             <>
                 <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
                     <div className="relative w-auto max-w-sm mx-auto my-6">
@@ -60,7 +71,6 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         type="text"
                                         name={'name' + id}
                                         className="block py-2.5 px-0 w-full text-lg font-popi text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                        value={name}
                                         onChange={(e) =>
                                             setName(e.target.value)
                                         }
@@ -70,7 +80,7 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         htmlFor={'name' + id}
                                         className="peer-focus:font-medium absolute text-md font-popi text-gray-500 dark:text-gray-400 duration-300 -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                     >
-                                        item name
+                                        {updatedItem.name}
                                     </label>
                                 </div>
                                 {/* description */}
@@ -79,7 +89,7 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         type="text"
                                         name={'desc' + id}
                                         className="block py-2.5 px-0 w-full text-lg font-popi text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                        value={desc}
+                                        // value={desc}
                                         onChange={(e) =>
                                             setDesc(e.target.value)
                                         }
@@ -89,7 +99,7 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         htmlFor={'desc' + id}
                                         className="peer-focus:font-medium absolute text-md font-popi text-gray-500 dark:text-gray-400 duration-300   -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                     >
-                                        description
+                                        {truncate(updatedItem.desc)}
                                     </label>
                                 </div>
                                 {/* imageURL */}
@@ -98,7 +108,7 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         type="text"
                                         name={'image' + id}
                                         className="block py-2.5 px-0 w-full text-lg font-popi text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                        value={image}
+                                        // value={image}
                                         onChange={(e) =>
                                             setImage(e.target.value)
                                         }
@@ -107,7 +117,9 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         htmlFor={'image' + id}
                                         className="peer-focus:font-medium absolute text-md font-popi text-gray-500 dark:text-gray-400 duration-300 -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                     >
-                                        imageURL
+                                        {updatedItem?.image
+                                            ? `${truncate(updatedItem?.image)}`
+                                            : 'empty 😒  please add image url'}
                                     </label>
                                 </div>
                                 {/* Price */}
@@ -116,7 +128,7 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         type="text"
                                         name={'price' + id}
                                         className="block py-2.5 px-0 w-full text-lg font-popi text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                        value={price}
+                                        // value={price}
                                         onChange={(e) =>
                                             setPrice(e.target.value)
                                         }
@@ -126,7 +138,7 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                         htmlFor={'price' + id}
                                         className="peer-focus:font-medium absolute text-md font-popi text-gray-500 dark:text-gray-400 duration-300 -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                     >
-                                        Price
+                                        {updatedItem.price}
                                     </label>
                                 </div>
                             </div>
@@ -140,11 +152,11 @@ function UpdateItemsModal({ updateModal, setUpdateModal, setItems }) {
                                     Close
                                 </button>
                                 <button
-                                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear rounded shadow outline-none bg-emerald-500 active:bg-emerald-600 hover:shadow-lg focus:outline-none"
+                                    className="px-6 py-3 mb-1 mr-1 text-sm font-bold font-popi text-white uppercase transition-all duration-150 ease-linear rounded shadow outline-none bg-emerald-500 active:bg-emerald-600 hover:shadow-lg focus:outline-none"
                                     type="button"
-                                    onClick={handelSubmit}
+                                    onClick={handelSave}
                                 >
-                                    Add New Item
+                                    Save Changes
                                 </button>
                             </div>
                         </div>
