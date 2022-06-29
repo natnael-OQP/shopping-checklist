@@ -22,8 +22,7 @@ function ShoppingItemLists() {
                 boughtItemTotalPrice += Number(item.price)
             }
         })
-
-        return (totalSumOfItemsPrice / boughtItemTotalPrice).toFixed(2)
+        return ((boughtItemTotalPrice / totalSumOfItemsPrice) * 100).toFixed(2)
     }
 
     useEffect(() => {
@@ -53,7 +52,7 @@ function ShoppingItemLists() {
             <h1 className="text-5xl font-semibold text-center font-popi py-3 ">
                 Shopping item checklist
             </h1>
-            {/* shopping in progress */}
+            {/* ---------- progress bar ---------- */}
             <div className="relative py-6">
                 <div className="flex mb-2 items-center justify-between">
                     <div>
@@ -74,14 +73,24 @@ function ShoppingItemLists() {
                     ></div>
                 </div>
             </div>
-            {/*X */}
-            <div className="my-3">
+            {/* ----------X progress bar ---------- */}
+            <div className="my-3 flex flex-row justify-between px-3 w-full ">
                 <button
                     onClick={() => setShowModal(!showModal)}
                     className="px-4 py-2 text-lg font-semibold rounded-md shadow-md bg-color3 text-color1 an font-popi "
                 >
                     Add Items
                 </button>
+
+                {/*
+            
+                <button
+                    onClick={() => setShowModal(!showModal)}
+                    className="px-4 py-2 text-lg font-semibold rounded-md shadow-md bg-color3 text-color1 an font-popi "
+                >
+                    time to buy
+                </button>
+            */}
             </div>
             <div className="flex flex-col flex-wrap w-full ">
                 {items.map((item) => (
